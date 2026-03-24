@@ -7,6 +7,7 @@ Dans ce projet, vous allez construire un **Système de recommandation d'images**
 **Durée** : 3 séances de travaux pratiques
 **Taille de l'équipe** : 2-3 étudiants
 **Livrables** :
+
 1. Un notebook Jupyter (`Nom1_Nom2_[Nom3].ipynb`)
 2. Un rapport de synthèse de 4 pages (PDF)
 
@@ -15,6 +16,7 @@ Dans ce projet, vous allez construire un **Système de recommandation d'images**
 ## Objectifs d'apprentissage
 
 En réalisant ce projet, vous allez :
+
 - Automatiser la collecte de données à partir de sources web
 - Extraire et traiter les métadonnées des images
 - Appliquer des algorithmes de clustering pour analyser les caractéristiques des images
@@ -33,29 +35,29 @@ Le système se compose de 7 tâches interconnectées :
 ┌─────────────────────────────────────────────────────────────────┐
 │              SYSTÈME DE RECOMMANDATION D'IMAGES                 │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
+│                                                                 │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
 │  │ 1. Collecte  │───▶│ 2. Étiquetage│───▶│ 3. Analyse   │       │
 │  │ de données   │    │ & Annotation │    │ des données  │       │
 │  └──────────────┘    └──────────────┘    └──────────────┘       │
-│        │                    │                   │                │
-│        ▼                    ▼                   ▼                │
+│        │                    │                   │               │
+│        ▼                    ▼                   ▼               │
 │  ┌──────────────────────────────────────────────────────┐       │
-│  │          Fichiers JSON (Stockage des métadonnées)     │       │
+│  │          Fichiers JSON (Stockage des métadonnées)    │       │
 │  └──────────────────────────────────────────────────────┘       │
-│        │                    │                   │                │
-│        ▼                    ▼                   ▼                │
+│        │                    │                   │               │
+│        ▼                    ▼                   ▼               │
 │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐       │
 │  │ 4. Visuali-  │    │ 5. Système   │    │ 6. Tests     │       │
 │  │ sation       │    │ de recomman- │    │              │       │
 │  └──────────────┘    │ dation       │    └──────────────┘       │
-│                      └──────────────┘                            │
-│                             │                                    │
-│                             ▼                                    │
-│                    ┌──────────────┐                              │
-│                    │ 7. Rapport   │                              │
-│                    │ de synthèse  │                              │
-│                    └──────────────┘                              │
+│                      └──────────────┘                           │
+│                             │                                   │
+│                             ▼                                   │
+│                    ┌──────────────┐                             │
+│                    │ 7. Rapport   │                             │
+│                    │ de synthèse  │                             │
+│                    └──────────────┘                             │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -66,11 +68,13 @@ Le système se compose de 7 tâches interconnectées :
 ## Tâche 1 : Collecte de données
 
 ### Objectif
+
 Collecter au moins **100 images sous licence libre** avec leurs métadonnées.
 
 ### Ce que vous devez faire
 
 1. **Créer une structure de dossiers** :
+
    ```
    projet/
    ├── images/           # Images téléchargées
@@ -96,10 +100,12 @@ Collecter au moins **100 images sous licence libre** avec leurs métadonnées.
    - Données EXIF (si disponibles) : modèle d'appareil photo, date de prise de vue, etc.
 
 ### Sortie attendue
+
 - Dossier `images/` avec 100+ images
 - `data/images_metadata.json` contenant les métadonnées de toutes les images
 
 ### Conseils
+
 - Utilisez `PIL` pour obtenir les dimensions des images
 - Utilisez `os.path.getsize()` pour obtenir la taille du fichier
 - Utilisez l'extraction EXIF (voir TP 2, Exercice 2)
@@ -110,6 +116,7 @@ Collecter au moins **100 images sous licence libre** avec leurs métadonnées.
 ## Tâche 2 : Étiquetage et annotation
 
 ### Objectif
+
 Ajouter des étiquettes descriptives et des caractéristiques calculées à chaque image.
 
 ### Ce que vous devez faire
@@ -134,11 +141,17 @@ Ajouter des étiquettes descriptives et des caractéristiques calculées à chaq
    - Grande : > 1500px
 
 ### Sortie attendue
+
 - `data/images_labels.json` avec métadonnées enrichies :
+
 ```json
 {
   "image_001.jpg": {
-    "predominant_colors": [[255, 128, 0], [0, 100, 200], [50, 50, 50]],
+    "predominant_colors": [
+      [255, 128, 0],
+      [0, 100, 200],
+      [50, 50, 50]
+    ],
     "color_names": ["orange", "bleu", "gris"],
     "orientation": "paysage",
     "size_category": "moyenne",
@@ -148,6 +161,7 @@ Ajouter des étiquettes descriptives et des caractéristiques calculées à chaq
 ```
 
 ### Conseils
+
 - Réutilisez votre code d'extraction de couleurs KMeans du TP 2
 - Pensez à utiliser un mapping de noms de couleurs (RGB → nom de couleur)
 - Stockez toutes les annotations dans un fichier JSON structuré
@@ -157,6 +171,7 @@ Ajouter des étiquettes descriptives et des caractéristiques calculées à chaq
 ## Tâche 3 : Analyse des données
 
 ### Objectif
+
 Construire des profils de préférences utilisateurs basés sur leurs sélections d'images.
 
 ### Ce que vous devez faire
@@ -166,6 +181,7 @@ Construire des profils de préférences utilisateurs basés sur leurs sélection
    - Les utilisateurs doivent avoir des préférences différentes (un aime la nature, un autre l'architecture, etc.)
 
 2. **Construire des profils utilisateurs** en analysant leurs images favorites :
+
    ```python
    user_profile = {
        "user_id": "utilisateur_001",
@@ -183,10 +199,12 @@ Construire des profils de préférences utilisateurs basés sur leurs sélection
    - Y a-t-il des clusters d'utilisateurs avec des préférences similaires ?
 
 ### Sortie attendue
+
 - `data/users.json` avec les profils utilisateurs
 - Résultats d'analyse montrant les tendances de préférences utilisateurs
 
 ### Conseils
+
 - Utilisez pandas pour l'analyse de données (groupby, value_counts)
 - Utilisez Counter de collections pour trouver les éléments les plus fréquents
 - Envisagez d'utiliser le clustering pour grouper les utilisateurs similaires
@@ -196,6 +214,7 @@ Construire des profils de préférences utilisateurs basés sur leurs sélection
 ## Tâche 4 : Visualisation des données
 
 ### Objectif
+
 Créer des visualisations qui révèlent des informations sur votre collection d'images et les préférences des utilisateurs.
 
 ### Visualisations requises
@@ -218,10 +237,12 @@ Créer des visualisations qui révèlent des informations sur votre collection d
    - Nuage de mots (optionnel) : Visualisation de la fréquence des tags
 
 ### Sortie attendue
+
 - Au moins 6 visualisations différentes dans votre notebook
 - Tous les graphiques doivent avoir des titres, des légendes et des axes étiquetés
 
 ### Conseils
+
 - Utilisez matplotlib pour toutes les visualisations (TP 2, Exercice 1)
 - Sauvegardez les graphiques importants avec `plt.savefig()`
 - Utilisez les subplots pour grouper les visualisations liées
@@ -231,6 +252,7 @@ Créer des visualisations qui révèlent des informations sur votre collection d
 ## Tâche 5 : Système de recommandation
 
 ### Objectif
+
 Implémenter un système qui recommande des images aux utilisateurs en fonction de leurs préférences.
 
 ### Choisissez votre approche
@@ -238,6 +260,7 @@ Implémenter un système qui recommande des images aux utilisateurs en fonction 
 Vous devez implémenter **au moins une** de ces approches :
 
 #### Option A : Filtrage basé sur le contenu (utilisant la classification)
+
 Recommander des images similaires à ce que l'utilisateur a déjà aimé.
 
 ```python
@@ -250,6 +273,7 @@ Recommander des images similaires à ce que l'utilisateur a déjà aimé.
 **Utiliser** : Decision Tree, Random Forest, ou SVM (TP 3, Exercices 2-3)
 
 #### Option B : Recommandation basée sur le clustering
+
 Grouper les images similaires ensemble et recommander depuis le même cluster.
 
 ```python
@@ -261,6 +285,7 @@ Grouper les images similaires ensemble et recommander depuis le même cluster.
 **Utiliser** : KMeans (TP 2, Exercices 3-5)
 
 #### Option C : Approche hybride
+
 Combiner les deux méthodes pour de meilleures recommandations.
 
 ### Exigences d'implémentation
@@ -270,6 +295,7 @@ Combiner les deux méthodes pour de meilleures recommandations.
 3. **Explication** : Brève raison pour laquelle chaque image est recommandée
 
 ### Sortie attendue
+
 ```python
 def recommend_images(user_id, n_recommendations=5):
     """
@@ -287,6 +313,7 @@ def recommend_images(user_id, n_recommendations=5):
 ```
 
 ### Conseils
+
 - Commencez avec les exemples dans `examples/recommendation.ipynb`
 - Utilisez LabelEncoder pour convertir les caractéristiques catégorielles en nombres
 - Testez vos recommandations manuellement - ont-elles du sens ?
@@ -296,6 +323,7 @@ def recommend_images(user_id, n_recommendations=5):
 ## Tâche 6 : Tests
 
 ### Objectif
+
 Vérifier que votre système fonctionne correctement.
 
 ### Tests requis
@@ -315,6 +343,7 @@ Vérifier que votre système fonctionne correctement.
    - Les recommandations correspondent aux préférences de l'utilisateur (ex. si l'utilisateur aime les images bleues, les recommandations devraient inclure des images bleues)
 
 ### Sortie attendue
+
 ```python
 def test_data_integrity():
     """Tester que toutes les données sont valides"""
@@ -330,6 +359,7 @@ def test_recommendation_system():
 ```
 
 ### Conseils
+
 - Utilisez les instructions `assert` pour des tests simples
 - Affichez des messages clairs de succès/échec
 - Testez les cas limites (profil utilisateur vide, nouvel utilisateur, etc.)
@@ -339,6 +369,7 @@ def test_recommendation_system():
 ## Tâche 7 : Rapport de synthèse
 
 ### Objectif
+
 Écrire un rapport de 4 pages résumant votre projet.
 
 ### Sections requises
@@ -372,6 +403,7 @@ def test_recommendation_system():
    - Auto-évaluation
 
 ### Format
+
 - 4 pages maximum
 - Format PDF
 - Pas de code dans le rapport (seulement les résultats et explications)
@@ -381,21 +413,22 @@ def test_recommendation_system():
 
 ## Critères d'évaluation
 
-| Tâche | Points | Critères clés |
-|-------|--------|---------------|
-| Collecte de données | 15% | Automatisation, 100+ images, métadonnées complètes |
-| Étiquetage & Annotation | 15% | Extraction de couleurs, catégorisation appropriée |
-| Analyse des données | 15% | Profils utilisateurs, analyse des préférences |
-| Visualisation des données | 15% | 6+ visualisations, formatage correct |
-| Système de recommandation | 20% | Algorithme fonctionnel, recommandations raisonnables |
-| Tests | 10% | Tests complets, tous passent |
-| Rapport de synthèse | 10% | Clair, complet, bien structuré |
+| Tâche                     | Points | Critères clés                                        |
+| ------------------------- | ------ | ---------------------------------------------------- |
+| Collecte de données       | 15%    | Automatisation, 100+ images, métadonnées complètes   |
+| Étiquetage & Annotation   | 15%    | Extraction de couleurs, catégorisation appropriée    |
+| Analyse des données       | 15%    | Profils utilisateurs, analyse des préférences        |
+| Visualisation des données | 15%    | 6+ visualisations, formatage correct                 |
+| Système de recommandation | 20%    | Algorithme fonctionnel, recommandations raisonnables |
+| Tests                     | 10%    | Tests complets, tous passent                         |
+| Rapport de synthèse       | 10%    | Clair, complet, bien structuré                       |
 
 ---
 
 ## Soumission
 
 ### Fichiers à soumettre
+
 ```
 Nom1_Nom2_[Nom3].zip
 ├── Nom1_Nom2_[Nom3].ipynb    # Votre notebook
@@ -407,6 +440,7 @@ Nom1_Nom2_[Nom3].zip
 ```
 
 ### Notes importantes
+
 - **NE SOUMETTEZ PAS** le dossier images (trop volumineux)
 - Assurez-vous que votre notebook s'exécute sans erreurs
 - Incluez des commentaires expliquant votre code
