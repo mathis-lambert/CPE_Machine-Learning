@@ -8,7 +8,7 @@ Dans ce projet, vous allez construire un **Système de recommandation d'images**
 **Taille de l'équipe** : 2-3 étudiants
 **Livrables** :
 
-1. Un notebook Jupyter (`Nom1_Nom2_[Nom3].ipynb`)
+1. Un notebook Jupyter (`LAMBERT_RODRIGUES_[BOUCHOT].ipynb`)
 2. Un rapport de synthèse de 4 pages (PDF)
 
 ---
