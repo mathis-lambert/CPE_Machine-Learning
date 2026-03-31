@@ -5,5 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "datasets>=4.8.4",
+    "fastparquet>=2026.3.0",
+    "huggingface-hub>=1.8.0",
     "opencv-python>=4.13.0.92",
+    "pyarrow>=23.0.1",
+    "seaborn>=0.13.2",
 ]
