@@ -11,4 +11,5 @@ dependencies = [
     "opencv-python>=4.13.0.92",
     "pyarrow>=23.0.1",
     "seaborn>=0.13.2",
+    "spacy>=3.8.13",
 ]
