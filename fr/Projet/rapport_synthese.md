@@ -57,20 +57,25 @@ La variable de taille a finalement été supprimée de la matrice, car toutes le
 
 Nous avons comparé trois stratégies de recommandation :
 
-1. **Filtrage basé sur le contenu**Un classificateur `RandomForest` est entraîné pour chaque utilisateur à partir de ses favoris et d'un échantillon d'images non favorites. Cette méthode apprend quels attributs séparent le mieux les images appréciées des autres.
-2. **Recommandation par clustering**Toutes les images sont regroupées par `KMeans`, puis nous recommandons des images issues des clusters les plus représentés dans les favoris de l'utilisateur. Le nombre de clusters a été choisi par score de silhouette ; le meilleur compromis observé est **`k = 6`**.
-3. **Approche hybride**
-   Les scores du modèle de contenu et du clustering sont normalisés puis combinés pour bénéficier à la fois d'un signal local précis et d'une vision plus globale de la similarité.
+1. **Filtrage basé sur le contenu** : un classificateur `RandomForest` est entraîné pour chaque utilisateur à partir de ses favoris et d'un échantillon d'images non favorites. Cette méthode apprend quels attributs séparent le mieux les images appréciées des autres.
+2. **Recommandation par clustering** : toutes les images sont regroupées par `KMeans`, puis nous recommandons des images issues des clusters les plus représentés dans les favoris de l'utilisateur. Le nombre de clusters a été choisi par score de silhouette ; le meilleur compromis observé est **`k = 6`**.
+3. **Approche hybride** : les scores du modèle de contenu et du clustering sont normalisés puis combinés pour bénéficier à la fois d'un signal local précis et d'une vision plus globale de la similarité.
 
 La fonction finale `recommend_images` expose une interface unique et renvoie une liste d'images accompagnées d'une justification textuelle.
 
-### 3.4 Architecture générale
+### 3.4 Visualisations et validation
+
+Le notebook contient plus de six visualisations. Elles couvrent les statistiques de collection (orientation, taille, format), l'analyse des couleurs dominantes, les préférences utilisateurs, les tags les plus fréquents, le choix du nombre de clusters par silhouette ainsi que la comparaison finale des méthodes de recommandation.
+
+Nous avons également consacré une tâche entière aux tests automatiques. Quatre familles de vérifications sont exécutées : cohérence des exports (`images_metadata.json`, `images_labels.json`, `users.json`), reconstruction de la matrice de features, conformité de l'API `recommend_images` et qualité minimale des recommandations. Cette validation garantit que le notebook ne produit pas seulement des figures, mais aussi des artefacts réutilisables et un système cohérent de bout en bout.
+
+### 3.5 Architecture générale
 
 Le pipeline du projet suit la logique suivante : **images brutes -> métadonnées -> annotations visuelles -> profils utilisateurs -> système de recommandation -> tests et évaluation**.
 
 ![Diagramme d'architecture](../../images/Project-Architecture.png)
 
-*Figure 1 - Architecture générale du projet.*
+_Figure 1 - Architecture générale du projet._
 
 ## 4. Résultats
 
@@ -80,13 +85,13 @@ L'analyse exploratoire met en évidence une collection très majoritairement com
 
 ![Distribution des orientations](figures/collection_orientation.png)
 
-*Figure 2 - Répartition des images par orientation.*
+_Figure 2 - Répartition des images par orientation._
 
 Du point de vue visuel, la couleur la plus fréquente dans les palettes dominantes est **`darkolivegreen`** avec **95 occurrences**, ce qui est cohérent avec un dataset de fleurs contenant souvent des feuilles et fonds végétaux. Le tag floral le plus fréquent est **`passion flower`** avec **17 images**. Ces résultats confirment que le dataset reste visuellement cohérent tout en présentant une diversité suffisante pour différencier les profils utilisateurs.
 
 ### 4.2 Qualité des recommandations
 
-Pour évaluer les recommandations, nous avons préféré un critère d'**alignement au profil utilisateur** plutôt qu'une séparation classique train/test. En effet, les utilisateurs sont simulés et leurs favoris ne proviennent pas d'un comportement réel ; un protocole standard de prédiction de clics aurait donc été peu interprétable. Nous avons donc construit un score composite reposant sur :
+Pour évaluer les recommandations, nous avons préféré un critère d'**alignement au profil utilisateur** plutôt qu'une séparation classique train/test. En effet, les utilisateurs sont simulés et leurs favoris ne proviennent pas d'un comportement réel/humain. Nous avons donc construit un score composite reposant sur :
 
 - Le recouvrement avec les couleurs favorites
 - Le recouvrement avec les tags favoris
@@ -95,17 +100,17 @@ Pour évaluer les recommandations, nous avons préféré un critère d'**alignem
 
 Les résultats moyens sont les suivants :
 
-| Méthode         |    Color match |      Tag match | Orientation match | Similarité moyenne | Alignement profil |
-| ---------------- | -------------: | -------------: | ----------------: | ------------------: | ----------------: |
-| Filtrage contenu |           0,82 |           0,16 |              0,80 |               0,599 |             0,651 |
-| Clustering       | **0,88** | **0,16** |    **0,94** |     **0,676** |   **0,717** |
-| Hybride          |           0,74 |           0,14 |              0,90 |               0,635 |             0,636 |
+| Méthode          | Color match | Tag match | Orientation match | Similarité moyenne | Alignement profil |
+| ---------------- | ----------: | --------: | ----------------: | -----------------: | ----------------: |
+| Filtrage contenu |        0,82 |      0,16 |              0,80 |              0,599 |             0,651 |
+| Clustering       |    **0,88** |  **0,16** |          **0,94** |          **0,676** |         **0,717** |
+| Hybride          |        0,74 |      0,14 |              0,90 |              0,635 |             0,636 |
 
 La méthode **clustering** obtient les meilleurs résultats globaux sur cet indicateur. Elle présente le meilleur alignement moyen au profil utilisateur (**0,717**), le meilleur recouvrement sur les couleurs favorites (**0,880**) ainsi que la meilleure similarité moyenne (**0,676**). C'est donc elle qui a été retenue comme méthode par défaut dans l'API finale.
 
 ![Comparaison des méthodes](figures/comparaison_methodes_recommandation.png)
 
-*Figure 3 - Comparaison des méthodes de recommandation et recouvrement moyen entre leurs top-5.*
+_Figure 3 - Comparaison des méthodes de recommandation et recouvrement moyen entre leurs top-5._
 
 Le faible recouvrement moyen entre le filtrage contenu et le clustering (**0,072** pour l'indice de Jaccard moyen sur les top-5) montre que ces deux approches n'explorent pas exactement les mêmes voisins.
 
@@ -130,3 +135,10 @@ Plusieurs améliorations sont possibles. Une première piste serait de remplacer
 Le projet aboutit à un système complet et cohérent de recommandation d'images : **500 images collectées et documentées**, annotations visuelles exportées, **10 profils utilisateurs** simulés, plusieurs méthodes de recommandation comparées, et une batterie de tests automatique qui valide l'ensemble du pipeline.
 
 Sur le plan méthodologique, le travail est satisfaisant car chaque étape s'appuie explicitement sur la précédente et produit des artefacts réutilisables. La solution retenue n'est pas la plus sophistiquée possible, mais elle est claire, explicable et adaptée au cadre du projet. Notre auto-évaluation est donc positive : le système fonctionne, les résultats sont argumentés, et les limites ont été identifiées de manière honnête.
+
+## 7. Références
+
+- Hugging Face, dataset `pufanyi/flowers102` : <https://huggingface.co/datasets/pufanyi/flowers102>
+- Documentation `scikit-learn` pour `KMeans`, `RandomForestClassifier` et le score de silhouette : <https://scikit-learn.org/>
+- Documentation `OpenCV` pour `GrabCut` : <https://docs.opencv.org/>
+- Documentation `Matplotlib` pour les visualisations et la palette CSS4 : <https://matplotlib.org/>
