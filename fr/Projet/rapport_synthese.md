@@ -13,7 +13,7 @@ Le projet a été conçu comme un pipeline cohérent : les artefacts produits à
 
 ## 2. Collecte de données
 
-Les images proviennent du dataset **`pufanyi/flowers102`** diffusé sur Hugging Face, lui-même basé sur la collection Flowers102. Toutes les images exploitées dans le projet sont associées à une licence **CC-BY-4.0**, ce qui répond à la contrainte de travailler avec des données librement réutilisables. Nous avons sélectionné **500 images** du split d'entraînement, ce qui dépasse largement le minimum demandé de 100 images.
+Les images proviennent du dataset **`pufanyi/flowers102`** diffusé sur Hugging Face, lui-même basé sur la collection Flowers102. Toutes les images exploitées dans le projet sont associées à une licence **CC-BY-4.0**, ce qui répond à la contrainte de travailler avec des données librement réutilisables. Nous avons sélectionné **500 images** du split d'entraînement.
 
 Pour chaque image, nous avons sauvegardé à la fois le fichier image et un ensemble de métadonnées structurées. Le fichier `images_metadata.json` contient notamment : le nom du fichier, l'identifiant de classe (`label_id`), la largeur, la hauteur, le format, la taille du fichier, l'URL source, le nom de la source ainsi que la licence.
 
@@ -107,7 +107,7 @@ La méthode **clustering** obtient les meilleurs résultats globaux sur cet indi
 
 *Figure 3 - Comparaison des méthodes de recommandation et recouvrement moyen entre leurs top-5.*
 
-Le faible recouvrement moyen entre le filtrage contenu et le clustering (**0,072** pour l'indice de Jaccard moyen sur les top-5) montre que ces deux approches n'explorent pas exactement les mêmes voisins. Ce résultat est intéressant, car il justifie le fait d'avoir comparé plusieurs logiques de recommandation au lieu de s'arrêter à une seule.
+Le faible recouvrement moyen entre le filtrage contenu et le clustering (**0,072** pour l'indice de Jaccard moyen sur les top-5) montre que ces deux approches n'explorent pas exactement les mêmes voisins.
 
 ### 4.3 Découvertes intéressantes
 
